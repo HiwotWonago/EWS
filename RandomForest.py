@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[2]:
-
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,11 +7,7 @@ import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-
-# In[3]:
-
-
-file_path = "C:\\Users\\Hiwi\\Downloads\\Out_of_school_rate_2022_formatted.xlsx" 
+file_path = "Out_of_school_rate_2022_formatted.xlsx"
 sheets_dict = pd.read_excel(file_path, sheet_name=['Primary', 'Lower secondary', 'Upper secondary'], header=[0, 1])
 
 
