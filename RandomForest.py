@@ -9,33 +9,16 @@ from sklearn.model_selection import train_test_split
 
 file_path = "Out_of_school_rate_2022_formatted.xlsx"
 sheets_dict = pd.read_excel(file_path, sheet_name=['Primary', 'Lower secondary', 'Upper secondary'], header=[0, 1])
-
-
-# In[4]:
-
-
 primary_df = sheets_dict['Primary']
 print(primary_df.columns.tolist()) 
-
-
-# In[5]:
-
 
 # Check sheet names and data
 for sheet_name, df in sheets_dict.items():
     print(f"Sheet: {sheet_name}")
     print(df.head(), "\n")
 
-
-# In[7]:
-
-
 primary_df = sheets_dict['Primary']
 print(primary_df[('Gender', 'Female')].apply(type).value_counts())#when we see our dataset the columns have different datatypes of float, int, and string data types
-
-
-# In[8]:
-
 
 # List of columns to clean (adjust based on our headers)
 numeric_columns = [
@@ -65,10 +48,6 @@ for sheet_name, df in sheets_dict.items():
         ('Wealth quintile', 'Poorest')  # we tried to make sure that sure another key feature has no NaN
     ])
 
-
-# In[9]:
-
-
 primary_df = sheets_dict['Primary']
 print("Data Types After Cleaning:")
 print(primary_df[numeric_columns].dtypes)
@@ -76,11 +55,6 @@ print(primary_df[numeric_columns].dtypes)
 # Check for remaining NaN values
 print("\nMissing Values After Cleaning:")
 print(primary_df[numeric_columns].isnull().sum())
-
-
-# In[10]:
-
-
 # Calculate a risk score (example weights)
 for sheet_name, df in sheets_dict.items():
     df[('Risk', 'Score')] = (
@@ -90,10 +64,6 @@ for sheet_name, df in sheets_dict.items():
     )
     # Categorize risk levels
     df[('Risk', 'Level')] = pd.cut(df[('Risk', 'Score')], bins=[0, 0.3, 0.7, 1], labels=['Low', 'Medium', 'High'])
-
-
-# In[12]:
-
 
 from sklearn.model_selection import train_test_split
 # Example: Using Primary school data
@@ -130,10 +100,6 @@ print(classification_report(y_test, y_pred))
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
-
-# In[13]:
-
-
 # Example new data 
 new_student = pd.DataFrame({
     ('Gender', 'Female'): [0.7],  
@@ -145,34 +111,18 @@ prediction = model.predict(new_student)
 probability = model.predict_proba(new_student)[0][1]  # Probability of dropout
 print(f"Predicted Dropout Risk: {probability:.0%}")
 
-
-# In[14]:
-
-
 #Gender Disparities: Compare mean dropout rates for girls vs. boys.
 
 print("Female Dropout Mean:", df[('Gender', 'Female')].mean())
 print("Male Dropout Mean:", df[('Gender', 'Male')].mean())
-
-
-# In[17]:
-
 
 #Wealth/Residence Impact: Visualize how poverty and location affect dropout rates.
 sns.boxplot(x=('Wealth quintile', 'Poorest'), y=('Gender', 'Female'), data=df)
 plt.title("Female Dropout Rates by Wealth Quintile")
 plt.show()
 
-
-# In[18]:
-
-
 #Correlation Heatmap: Identify strong predictors.
 sns.heatmap(df[numeric_columns].corr(), annot=True)
-
-
-# In[25]:
-
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -188,22 +138,12 @@ for sheet_name, df in sheets_dict.items():
     
     # Update the sheet in the dictionary
     sheets_dict[sheet_name] = df
-
-
-# In[26]:
-
-
 primary_df = sheets_dict['Primary']
 print("Normalized Female Dropout Rates (Sample):")
 print(primary_df[('Gender', 'Female')].head())
 
 print("\nDescriptive Statistics After Normalization:")
 print(primary_df[('Gender', 'Female')].describe())
-
-
-# In[19]:
-
-
 #Normalize each feature to ensure equal weighting
 # Normalize Female Dropout Rate (0 to 1)
 df[('Normalized', 'Female_Dropout')] = df[('Gender', 'Female')] / 100
@@ -215,10 +155,6 @@ df[('Normalized', 'Rural')] = df[('Residence', 'Rural')] / 100
 wealth_weights = {'Poorest': 1.0, 'Second': 0.75, 'Middle': 0.5, 'Fourth': 0.25, 'Richest': 0.0}
 df[('Normalized', 'Poverty')] = df[('Wealth quintile', 'Poorest')].map(wealth_weights)
 
-
-# In[27]:
-
-
 for sheet_name, df in sheets_dict.items():
     df[('Risk', 'Score')] = (
         0.6 * df[('Gender', 'Female')] +  # Weighted sum
@@ -226,10 +162,6 @@ for sheet_name, df in sheets_dict.items():
         0.1 * df[('Wealth quintile', 'Poorest')]
     )
     sheets_dict[sheet_name] = df
-
-
-# In[20]:
-
 
 # Weights (sum to 1.0)
 weight_female = 0.6   # Most important
@@ -243,18 +175,9 @@ df[('Risk', 'Score')] = (
 )
 df[('Risk', 'Score')] = df[('Risk', 'Score')] * 100
 
-
-# In[21]:
-
-
 bins = [0, 30, 70, 100]
 labels = ['Low', 'Medium', 'High']
 df[('Risk', 'Level')] = pd.cut(df[('Risk', 'Score')], bins=bins, labels=labels)
-
-
-# In[28]:
-
-
 wealth_labels = {
     'Poorest': 'Poorest',
     'Second': 'Second',
@@ -280,10 +203,5 @@ plt.ylim(0, 100)  # Force y-axis to 0-100
 plt.xticks(rotation=45)
 plt.grid(axis='y', alpha=0.2)
 plt.show()
-
-
-# In[ ]:
-
-
 
 
